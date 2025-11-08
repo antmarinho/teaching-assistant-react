@@ -5,10 +5,8 @@ export class StudentSet {
 
   // Add a new student
   addStudent(student: Student): Student {
-    const cleanCPF = student.getCleanCPF();
-    
-    // Check if CPF already exists
-    if (this.findStudentByCPF(cleanCPF)) {
+    // Check if CPF already exists (student.cpf is already clean)
+    if (this.findStudentByCPF(student.cpf)) {
       throw new Error('Student with this CPF already exists');
     }
 
@@ -18,8 +16,9 @@ export class StudentSet {
 
   // Remove student by CPF
   removeStudent(cpf: string): boolean {
+    // Clean the input CPF for comparison
     const cleanCPF = cpf.replace(/[.-]/g, '');
-    const index = this.students.findIndex(s => s.getCleanCPF() === cleanCPF);
+    const index = this.students.findIndex(s => s.cpf === cleanCPF);
     
     if (index === -1) {
       return false;
@@ -31,8 +30,8 @@ export class StudentSet {
 
   // Update student by CPF
   updateStudent(updatedStudent: Student): Student {
-    const cleanCPF = updatedStudent.getCleanCPF();
-    const existingStudent = this.findStudentByCPF(cleanCPF);
+    // updatedStudent.cpf is already clean
+    const existingStudent = this.findStudentByCPF(updatedStudent.cpf);
     
     if (!existingStudent) {
       throw new Error('Student not found');
@@ -48,8 +47,9 @@ export class StudentSet {
 
   // Find student by CPF
   findStudentByCPF(cpf: string): Student | undefined {
+    // Clean the input CPF for comparison
     const cleanCPF = cpf.replace(/[.-]/g, '');
-    return this.students.find(s => s.getCleanCPF() === cleanCPF);
+    return this.students.find(s => s.cpf === cleanCPF);
   }
 
   // Get all students

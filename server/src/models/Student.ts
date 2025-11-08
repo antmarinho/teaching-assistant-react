@@ -4,13 +4,16 @@ export class Student {
     public cpf: string,
     public email: string
   ) {
-    this.validateCPF(cpf);
+    this.cpf = this.cleanCPF(cpf); // Store only clean CPF internally
+    this.validateCPF(this.cpf);
     this.validateEmail(email);
   }
 
-  private validateCPF(cpf: string): void {
-    // Basic CPF validation - remove dots and dashes, check length
-    const cleanCPF = cpf.replace(/[.-]/g, '');
+  private cleanCPF(cpf: string): string {
+    return cpf.replace(/[.-]/g, '');
+  }
+
+  private validateCPF(cleanCPF: string): void {
     if (cleanCPF.length !== 11 || !/^\d+$/.test(cleanCPF)) {
       throw new Error('Invalid CPF format');
     }
@@ -25,13 +28,12 @@ export class Student {
 
   // Format CPF for display (000.000.000-00)
   getFormattedCPF(): string {
-    const cleanCPF = this.cpf.replace(/[.-]/g, '');
-    return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    return this.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 
-  // Get clean CPF for comparison
+  // Get clean CPF (already clean internally)
   getCleanCPF(): string {
-    return this.cpf.replace(/[.-]/g, '');
+    return this.cpf;
   }
 
   // Convert to JSON for API responses
