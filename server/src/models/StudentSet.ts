@@ -39,14 +39,29 @@ export class StudentSet {
     existingStudent.name = updatedStudent.name;
     existingStudent.email = updatedStudent.email;
     
-    // Update evaluations by modifying individual elements to preserve object identity
-    // Clear existing evaluations first
-    existingStudent.evaluations.length = 0;
-    
-    // Add updated evaluations to the existing array
-    updatedStudent.evaluations.forEach(newEval => {
-      existingStudent.evaluations.push(newEval);
+        // Update evaluations by modifying existing objects and adding new ones as needed
+    updatedStudent.evaluations.forEach(updatedEval => {
+      // Find existing evaluation for this goal
+      const existingEval = existingStudent.evaluations.find(evaluation => evaluation.getGoal() === updatedEval.getGoal());
+      
+      if (existingEval) {
+        // Update the existing evaluation object's grade (preserving object identity)
+        existingEval.setGrade(updatedEval.getGrade());
+      } else {
+        // Add new evaluation object for goals that don't exist yet
+        existingStudent.evaluations.push(updatedEval);
+      }
     });
+    
+    // Remove evaluations that are no longer in the updated list
+    for (let i = existingStudent.evaluations.length - 1; i >= 0; i--) {
+      const existingGoal = existingStudent.evaluations[i].getGoal();
+      const stillExists = updatedStudent.evaluations.some(updatedEval => updatedEval.getGoal() === existingGoal);
+      
+      if (!stillExists) {
+        existingStudent.evaluations.splice(i, 1);
+      }
+    };
     
     // CPF should not be updated as it's the identifier
     
